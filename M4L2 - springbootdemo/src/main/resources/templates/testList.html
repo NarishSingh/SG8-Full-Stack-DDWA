@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Test List</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <body>
+        <!--GET, using th:each like an enhanced for loop-->
+        <p th:each="number: ${numberList}">
+            <span th:text="${number}"></span>
+        </p>
+    </body>
+</html>

@@ -10,15 +10,15 @@
         <!--From GET-->
         <p>Number: <span th:text="${number}"></span></p>
         <p>Name: <span th:text="${firstName}"></span></p>
-        
+
         <!--From POST-->
         <form action="testForm" method="POST">
             New Number: <input type="text" name="formNumber"/>
             <br/>
-            
+
             New Name: <input type="text" name="formFirstName"/>
             <br/>
-            
+
             <button type="submit">Submit</button>
         </form>
     </body>
