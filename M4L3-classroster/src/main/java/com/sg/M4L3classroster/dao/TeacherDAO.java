@@ -9,7 +9,7 @@ public interface TeacherDAO {
 
     List<Teacher> readAllTeachers();
 
-    Teacher addTeacher(Teacher teacher);
+    Teacher createTeacher(Teacher teacher);
 
     void updateTeacher(Teacher teacher);
 
