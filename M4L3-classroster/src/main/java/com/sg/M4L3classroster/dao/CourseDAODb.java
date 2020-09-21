@@ -48,26 +48,50 @@ public class CourseDAODb implements CourseDAO {
     @Override
     @Transactional
     public Course createCourse(Course course) {
-        String updateQuery = "UPDATE course "
-                + "SET name = ?, description = ?, teacherId = ? "
-                + "WHERE id = ?;";
+        String createQuery = "INSERT INTO course(name, description, teacherId) "
+                + "VALUES(?,?,?);";
+        jdbc.update(createQuery, 
+                course.getName(),
+                course.getDescription(),
+                course.getTeacher().getId());
         
-        jdbc.update(updateQuery, course.getName(),
+        int newId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+        course.setId(newId);
+        insertCourseStudent(course);
+        
+        return course;
+    }
+
+    @Override
+    @Transactional
+    public void updateCourse(Course course) {
+        String updateQuery = "UPDATE course SET "
+                + "name = ?, "
+                + "description = ?, "
+                + "teacherId = ? "
+                + "WHERE id = ?;";
+        jdbc.update(updateQuery, 
+                course.getName(),
                 course.getDescription(),
                 course.getTeacher().getId(),
                 course.getId());
         
-        //TODO CONTINUE HERE
+        String deleteQuery = "DELETE FROM course_student "
+                + "WHERE courseId = ?;";
+        jdbc.update(deleteQuery, course.getId());
+        insertCourseStudent(course);
     }
 
     @Override
-    public void updateCourse(Course course) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
+    @Transactional
     public void deleteCourseById(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String deleteCourseStudentQuery = "DELETE FROM course_student "
+                + "WHERE courseId = ?;";
+        jdbc.update(deleteCourseStudentQuery, id);
+        
+        String deleteCourseQuery = "DELETE FROM course "
+                + "WHERE id = ?;";
+        jdbc.update(deleteCourseQuery, id);
     }
 
     @Override
@@ -112,6 +136,17 @@ public class CourseDAODb implements CourseDAO {
         for (Course c : courses) {
             c.setTeacher(readTeacherForCourse(c.getId()));
             c.setStudents(readStudentsForCourse(c.getId()));
+        }
+    }
+
+    private void insertCourseStudent(Course course) {
+        String createCourseStudentQuery = "INSERT INTO course_student(courseId, studentId) "
+                + "VALUES(?,?);";
+        
+        for (Student s : course.getStudents()) {
+            jdbc.update(createCourseStudentQuery, 
+                    course.getId(), 
+                    s.getId());
         }
     }
 
