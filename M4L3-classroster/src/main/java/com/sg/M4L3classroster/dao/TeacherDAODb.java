@@ -1,13 +1,11 @@
 package com.sg.M4L3classroster.dao;
 
 import com.sg.M4L3classroster.model.Teacher;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,17 +45,18 @@ public class TeacherDAODb implements TeacherDAO {
                 teacher.getLastName(),
                 teacher.getSpecialty());
 
-        int newId = jdbc.queryForObject("SELECT LAST_INSERT_ID;", Integer.class);
+        int newId = jdbc.queryForObject("SELECT LAST_INSERT_ID();", Integer.class);
         teacher.setId(newId);
+
         return teacher;
     }
 
     @Override
     public void updateTeacher(Teacher teacher) {
         String updateQuery = "UPDATE teacher SET "
-                + "firstName = ?,"
-                + "lastName = ?,"
-                + "specialty = ?,"
+                + "firstName = ?, "
+                + "lastName = ?, "
+                + "specialty = ?, "
                 + "WHERE id = ?;";
 
         jdbc.update(updateQuery,
@@ -72,7 +71,7 @@ public class TeacherDAODb implements TeacherDAO {
     public void deleteTeacherById(int id) {
         //delete from bridge table
         String bridgeDeleteQuery = "DELETE cs.* FROM course_student cs "
-                + "JOIN course c ON cs.courseId = c.id"
+                + "JOIN course c ON cs.courseId = c.id "
                 + "WHERE c.teacherId = ?;";
         jdbc.update(bridgeDeleteQuery, id);
 

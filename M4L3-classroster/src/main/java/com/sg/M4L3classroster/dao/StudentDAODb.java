@@ -1,13 +1,11 @@
 package com.sg.M4L3classroster.dao;
 
 import com.sg.M4L3classroster.model.Student;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,43 +30,46 @@ public class StudentDAODb implements StudentDAO {
     @Override
     public List<Student> readAllStudents() {
         String readAllQuery = "SELECT * FROM student;";
-        
+
         return jdbc.query(readAllQuery, new StudentMapper());
     }
 
     @Override
     @Transactional
     public Student createStudent(Student student) {
-        String createQuery = "INSERT INTO student(firstName, lastName)"
+        String createQuery = "INSERT INTO student(firstName, lastName) "
                 + "VALUES(?,?);";
-        jdbc.update(createQuery, 
-                student.getFirstName(), 
+        jdbc.update(createQuery,
+                student.getFirstName(),
                 student.getLastName());
-        
-        int newId = jdbc.queryForObject("SELECT LAST_INSERT_ID;", Integer.class);
+
+        int newId = jdbc.queryForObject("SELECT LAST_INSERT_ID();", Integer.class);
         student.setId(newId);
-        
+
         return student;
     }
 
     @Override
     public void updateStudent(Student student) {
-        String updateQuery = "UPDATE student "
-                + "SET firstName = ?, lastName = ?"
+        String updateQuery = "UPDATE student SET "
+                + "firstName = ?, "
+                + "lastName = ? "
                 + "WHERE id = ?;";
-        jdbc.update(updateQuery, 
-                student.getFirstName(), 
-                student.getLastName(), 
+        jdbc.update(updateQuery,
+                student.getFirstName(),
+                student.getLastName(),
                 student.getId());
     }
 
     @Override
     @Transactional
     public void deleteStudentById(int id) {
+        //delete from bridge
         String deleteCourseStudentQuery = "DELETE FROM course_student "
                 + "WHERE studentId = ?;";
         jdbc.update(deleteCourseStudentQuery, id);
-        
+
+        //delete
         String deleteStudentQuery = "DELETE FROM student "
                 + "WHERE studentId = ?;";
         jdbc.update(deleteStudentQuery, id);

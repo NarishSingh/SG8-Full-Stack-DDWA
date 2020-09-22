@@ -5,13 +5,11 @@ import com.sg.M4L3classroster.dao.TeacherDAODb.TeacherMapper;
 import com.sg.M4L3classroster.model.Course;
 import com.sg.M4L3classroster.model.Student;
 import com.sg.M4L3classroster.model.Teacher;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +19,7 @@ public class CourseDAODb implements CourseDAO {
     @Autowired
     JdbcTemplate jdbc;
 
+    /*CRUD*/
     @Override
     public Course readCourseById(int id) {
         try {
@@ -38,10 +37,10 @@ public class CourseDAODb implements CourseDAO {
 
     @Override
     public List<Course> readAllCourses() {
-        String readAllQuery = "SELECT * FROM course";
-
+        String readAllQuery = "SELECT * FROM course;";
         List<Course> courses = jdbc.query(readAllQuery, new CourseMapper());
         associateTeacherAndStudents(courses);
+        
         return courses;
     }
 
@@ -55,7 +54,7 @@ public class CourseDAODb implements CourseDAO {
                 course.getDescription(),
                 course.getTeacher().getId());
         
-        int newId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+        int newId = jdbc.queryForObject("SELECT LAST_INSERT_ID();", Integer.class);
         course.setId(newId);
         insertCourseStudent(course);
         
@@ -98,8 +97,8 @@ public class CourseDAODb implements CourseDAO {
     public List<Course> readCoursesForTeacher(Teacher teacher) {
         String readCoursesTeacherQuery = "SELECT * FROM course "
                 + "WHERE teacherId = ?;";
-
         List<Course> courses = jdbc.query(readCoursesTeacherQuery, new CourseMapper(), teacher.getId());
+        
         return courses;
     }
 
@@ -108,7 +107,6 @@ public class CourseDAODb implements CourseDAO {
         String readCoursesStudentQuery = "SELECT c.* FROM course c "
                 + "JOIN course_student cs ON cs.courseId = c.id "
                 + "WHERE cs.studentId = ?;";
-
         List<Course> courses = jdbc.query(readCoursesStudentQuery, new CourseMapper(), student.getId());
         associateTeacherAndStudents(courses);
 
@@ -121,7 +119,8 @@ public class CourseDAODb implements CourseDAO {
                 + "JOIN course c ON c.teacherId = t.id "
                 + "WHERE c.id = ?;";
 
-        return jdbc.queryForObject(readTeacherCourseQuery, new TeacherMapper(), id);
+        //no try-catch needed due to db constraint, course has an fk toa teacher
+        return jdbc.queryForObject(readTeacherCourseQuery, new TeacherMapper(), id); 
     }
 
     private List<Student> readStudentsForCourse(int id) {
@@ -129,6 +128,7 @@ public class CourseDAODb implements CourseDAO {
                 + "JOIN course_student cs ON cs.studentId = s.id "
                 + "WHERE cs.courseId = ?;";
 
+        //no try-catched needed due to bridge table, must exist
         return jdbc.query(readStudentCourseQuery, new StudentMapper(), id);
     }
 
@@ -150,6 +150,9 @@ public class CourseDAODb implements CourseDAO {
         }
     }
 
+    /**
+     * Row Mapper Implementation for course model
+     */
     public static class CourseMapper implements RowMapper<Course> {
 
         @Override
