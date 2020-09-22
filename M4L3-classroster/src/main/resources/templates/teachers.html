@@ -31,42 +31,51 @@
                 </div>
             </div>
         </div>
-        
+
+        <!--validation errors-->
+        <div class="col-12 m-1 text-center" 
+             th:if="${!errors.isEmpty()}">
+            <p class="alert alert-danger" th:each="error : ${errors}" 
+               th:text="${error.message}">Error message</p>
+        </div>
+
+        <!--add teacher-->
         <div class="row m-4 border border-dark">
-                <div class="col-3 text-center m-3">
-                    <span class="h3">Add Teacher</span>
-                </div>
-                <div class="col-7 text-center m-3">
-                    <form action="addTeacher" method="POST">
-                        <div class="form-group row">
-                            <label for="firstName" class="col-3 col-form-label">
-                                First Name</label>
-                            <div class="col-9">
-                                <input type="text" name="firstName" 
-                                       id="firstName" class="form-control"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="lastName" class="col-3 col-form-label">
-                                Last Name</label>
-                            <div class="col-9">
-                                <input type="text" name="lastName" 
-                                       id="lastName" class="form-control"/>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="specialty" class="col-3 col-form-label">
-                                Specialty</label>
-                            <div class="col-9">
-                                <input type="text" name="specialty" 
-                                       id="specialty" class="form-control"/>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Add Teacher</button>
-                    </form>
-                </div>
+            <div class="col-3 text-center m-3">
+                <span class="h3">Add Teacher</span>
             </div>
-        
+            <div class="col-7 text-center m-3">
+                <form action="addTeacher" method="POST">
+                    <div class="form-group row">
+                        <label for="firstName" class="col-3 col-form-label">
+                            First Name</label>
+                        <div class="col-9">
+                            <input type="text" name="firstName" 
+                                   id="firstName" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="lastName" class="col-3 col-form-label">
+                            Last Name</label>
+                        <div class="col-9">
+                            <input type="text" name="lastName" 
+                                   id="lastName" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="specialty" class="col-3 col-form-label">
+                            Specialty</label>
+                        <div class="col-9">
+                            <input type="text" name="specialty" 
+                                   id="specialty" class="form-control"/>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Teacher</button>
+                </form>
+            </div>
+        </div>
+
+        <!--teacher table-->
         <div class="row m-4 border border-dark">
             <div class="col text-center m-3">
                 <table class="table table-striped">
@@ -88,7 +97,7 @@
                             <td th:text="${teacher.specialty}">Teacher Specialty</td>
                             <td><a href="#" th:href="@{/editTeacher(id=${teacher.id})}">Edit</a></td>
                             <td><a href="#" th:href="@{/deleteTeacher(id=${teacher.id})}">Delete</a></td>
-                    </tr>
+                        </tr>
                     </tbody>
                 </table>
             </div>
