@@ -54,6 +54,7 @@ public class CourseDAODb implements CourseDAO {
                 course.getDescription(),
                 course.getTeacher().getId());
         
+        //must insert before grabbing the id due to pk ai behavior
         int newId = jdbc.queryForObject("SELECT LAST_INSERT_ID();", Integer.class);
         course.setId(newId);
         insertCourseStudent(course);
@@ -75,6 +76,8 @@ public class CourseDAODb implements CourseDAO {
                 course.getTeacher().getId(),
                 course.getId());
         
+        //delete and re-insert bridge table info
+        //this also makes the update transactional
         String deleteQuery = "DELETE FROM course_student "
                 + "WHERE courseId = ?;";
         jdbc.update(deleteQuery, course.getId());
