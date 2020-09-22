@@ -71,7 +71,7 @@ public class StudentDAODb implements StudentDAO {
 
         //delete
         String deleteStudentQuery = "DELETE FROM student "
-                + "WHERE studentId = ?;";
+                + "WHERE id = ?;";
         jdbc.update(deleteStudentQuery, id);
     }
 

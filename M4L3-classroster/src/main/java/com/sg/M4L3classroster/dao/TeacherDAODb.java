@@ -56,7 +56,7 @@ public class TeacherDAODb implements TeacherDAO {
         String updateQuery = "UPDATE teacher SET "
                 + "firstName = ?, "
                 + "lastName = ?, "
-                + "specialty = ?, "
+                + "specialty = ? "
                 + "WHERE id = ?;";
 
         jdbc.update(updateQuery,

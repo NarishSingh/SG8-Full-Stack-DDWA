@@ -100,7 +100,11 @@ public class CourseDAODb implements CourseDAO {
     public List<Course> readCoursesForTeacher(Teacher teacher) {
         String readCoursesTeacherQuery = "SELECT * FROM course "
                 + "WHERE teacherId = ?;";
-        List<Course> courses = jdbc.query(readCoursesTeacherQuery, new CourseMapper(), teacher.getId());
+        List<Course> courses = jdbc.query(readCoursesTeacherQuery, 
+                new CourseMapper(), 
+                teacher.getId());
+        
+        associateTeacherAndStudents(courses);
         
         return courses;
     }
@@ -110,7 +114,10 @@ public class CourseDAODb implements CourseDAO {
         String readCoursesStudentQuery = "SELECT c.* FROM course c "
                 + "JOIN course_student cs ON cs.courseId = c.id "
                 + "WHERE cs.studentId = ?;";
-        List<Course> courses = jdbc.query(readCoursesStudentQuery, new CourseMapper(), student.getId());
+        List<Course> courses = jdbc.query(readCoursesStudentQuery, 
+                new CourseMapper(), 
+                student.getId());
+        
         associateTeacherAndStudents(courses);
 
         return courses;
