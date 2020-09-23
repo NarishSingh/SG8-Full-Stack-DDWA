@@ -29,16 +29,16 @@ public class StudentController {
 
     @Autowired
     CourseDAO courseDao;
-    
+
     Set<ConstraintViolation<Student>> violations = new HashSet<>();
 
     @GetMapping("students")
     public String displayStudents(Model model) {
         List students = studentDao.readAllStudents();
         model.addAttribute("students", students);
-        
+
         model.addAttribute("errors", violations);
-        
+
         return "students";
     }
 
@@ -47,6 +47,7 @@ public class StudentController {
         Student student = new Student();
         student.setFirstName(firstName);
         student.setLastName(lastName);
+
         //validation using constraints from dto
         Validator validate = Validation.buildDefaultValidatorFactory().getValidator();
         violations = validate.validate(student);
@@ -76,6 +77,7 @@ public class StudentController {
         if (result.hasErrors()) {
             return "editStudent";
         }
+        
         studentDao.updateStudent(student);
         return "redirect:/students";
     }

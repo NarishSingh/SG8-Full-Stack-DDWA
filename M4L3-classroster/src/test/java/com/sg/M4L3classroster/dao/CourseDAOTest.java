@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CourseDAOTest {
-    
+
     @Autowired
     TeacherDAO teacherDAO;
 
@@ -29,10 +29,10 @@ public class CourseDAOTest {
 
     @Autowired
     CourseDAO courseDAO;
-    
+
     public CourseDAOTest() {
     }
-    
+
     @BeforeEach
     public void setUp() {
         List<Teacher> teachers = teacherDAO.readAllTeachers();
@@ -50,7 +50,7 @@ public class CourseDAOTest {
             courseDAO.deleteCourseById(c.getId());
         }
     }
-    
+
     /**
      * Test of createCourse and readCourseById method, of class CourseDAO.
      */
@@ -74,7 +74,7 @@ public class CourseDAOTest {
         c.setTeacher(t);
         c.setStudents(students);
         c = courseDAO.createCourse(c);
-        
+
         Course fromDao = courseDAO.readCourseById(c.getId());
         assertEquals(c, fromDao);
     }
@@ -102,15 +102,15 @@ public class CourseDAOTest {
         c.setTeacher(t);
         c.setStudents(students);
         c = courseDAO.createCourse(c);
-        
+
         Course c2 = new Course();
         c2.setName("Test Course2");
         c2.setTeacher(t);
         c2.setStudents(students);
         c2 = courseDAO.createCourse(c2);
-        
+
         List<Course> courses = courseDAO.readAllCourses();
-        
+
         assertEquals(2, courses.size());
         assertTrue(courses.contains(c));
         assertTrue(courses.contains(c2));
@@ -139,10 +139,10 @@ public class CourseDAOTest {
         c.setTeacher(t);
         c.setStudents(students);
         c = courseDAO.createCourse(c);
-        
+
         Course fromDao = courseDAO.readCourseById(c.getId());
         assertEquals(c, fromDao);
-        
+
         c.setName("New Course Name");
         Student s2 = new Student();
         s2.setFirstName("first2");
@@ -150,11 +150,11 @@ public class CourseDAOTest {
         s2 = studentDAO.createStudent(s2);
         students.add(s2);
         c.setStudents(students);
-        
+
         courseDAO.updateCourse(c);
-        
+
         assertNotEquals(c, fromDao);
-        
+
         fromDao = courseDAO.readCourseById(c.getId());
         assertEquals(c, fromDao);
     }
@@ -182,12 +182,12 @@ public class CourseDAOTest {
         c.setTeacher(t);
         c.setStudents(students);
         c = courseDAO.createCourse(c);
-        
+
         Course fromDao = courseDAO.readCourseById(c.getId());
         assertEquals(c, fromDao);
-        
+
         courseDAO.deleteCourseById(c.getId());
-        
+
         fromDao = courseDAO.readCourseById(c.getId());
         assertNull(fromDao);
     }
@@ -202,7 +202,7 @@ public class CourseDAOTest {
         t1.setLastName("Test Last");
         t1.setSpecialty("Test Specialty");
         t1 = teacherDAO.createTeacher(t1);
-        
+
         Teacher t2 = new Teacher();
         t2.setFirstName("Test First2");
         t2.setLastName("Test Last2");
@@ -221,21 +221,21 @@ public class CourseDAOTest {
         c1.setTeacher(t1);
         c1.setStudents(students);
         c1 = courseDAO.createCourse(c1);
-        
+
         Course c2 = new Course();
         c2.setName("Test Course2");
         c2.setTeacher(t2); //NOT t #1
         c2.setStudents(students);
         c2 = courseDAO.createCourse(c2);
-        
+
         Course c3 = new Course();
         c3.setName("Test Course3");
         c3.setTeacher(t1);
         c3.setStudents(students);
         c3 = courseDAO.createCourse(c3);
-        
+
         List<Course> courses = courseDAO.readCoursesForTeacher(t1);
-        
+
         assertEquals(2, courses.size());
         assertTrue(courses.contains(c1));
         assertFalse(courses.contains(c2));
@@ -252,42 +252,42 @@ public class CourseDAOTest {
         t.setLastName("Test Last");
         t.setSpecialty("Test Specialty");
         t = teacherDAO.createTeacher(t);
-        
+
         Student s1 = new Student();
         s1.setFirstName("Test Student First");
         s1.setLastName("Test Student Last");
         s1 = studentDAO.createStudent(s1);
-        
+
         Student s2 = new Student();
         s2.setFirstName("Test Student First2");
         s2.setLastName("Test Student Last2");
         s2 = studentDAO.createStudent(s2);
-        
+
         List<Student> students = new ArrayList<>();
         students.add(s1);
         students.add(s2);
-        
+
         List<Student> students2 = new ArrayList<>();
         students2.add(s2);
-        
+
         Course c1 = new Course();
         c1.setName("Test Course");
         c1.setTeacher(t);
         c1.setStudents(students);
         c1 = courseDAO.createCourse(c1);
-        
+
         Course c2 = new Course();
         c2.setName("Test Course2");
         c2.setTeacher(t);
         c2.setStudents(students);
         c2 = courseDAO.createCourse(c2);
-        
+
         Course c3 = new Course();
         c3.setName("Test Course3");
         c3.setTeacher(t);
         c3.setStudents(students2); //ONLY w s2
         c3 = courseDAO.createCourse(c3);
-        
+
         List<Course> courses = courseDAO.readCoursesForStudent(s1);
         assertEquals(2, courses.size());
         assertTrue(courses.contains(c1));
