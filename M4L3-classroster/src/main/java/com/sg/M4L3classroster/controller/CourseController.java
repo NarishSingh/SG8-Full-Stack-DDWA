@@ -97,28 +97,32 @@ public class CourseController {
 
         course.setTeacher(teacherDao.readTeacherById(Integer.parseInt(teacherId)));
 
+        //check if students is null
+        //if so, create an FieldError and add to BindingResult
         List<Student> students = new ArrayList<>();
         if (studentIds != null) {
             for (String studentId : studentIds) {
                 students.add(studentDao.readStudentById(Integer.parseInt(studentId)));
             }
         } else {
-            FieldError error = new FieldError("course", "students", "Must include at least 1 student");
+            FieldError error = new FieldError("course", "students",
+                    "Must include at least 1 student");
             result.addError(error);
         }
-        
+
         course.setStudents(students);
-        
+
+        //If there are errors, return the model back to a nuetral state
         if (result.hasErrors()) {
             model.addAttribute("teachers", teacherDao.readAllTeachers());
             model.addAttribute("students", studentDao.readAllStudents());
             model.addAttribute("course", course);
-            
+
             return "editCourse";
         }
-        
+
         courseDao.updateCourse(course);
-        
+
         return "redirect:/courses";
     }
 }

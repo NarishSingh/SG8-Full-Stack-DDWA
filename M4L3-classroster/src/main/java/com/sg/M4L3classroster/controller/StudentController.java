@@ -62,6 +62,7 @@ public class StudentController {
     @GetMapping("deleteStudent")
     public String deleteStudent(Integer id) {
         studentDao.deleteStudentById(id);
+        
         return "redirect:/students";
     }
 
@@ -69,6 +70,7 @@ public class StudentController {
     public String editStudent(Integer id, Model model) {
         Student student = studentDao.readStudentById(id);
         model.addAttribute("student", student);
+        
         return "editStudent";
     }
 
@@ -79,6 +81,7 @@ public class StudentController {
         }
         
         studentDao.updateStudent(student);
+        
         return "redirect:/students";
     }
 }

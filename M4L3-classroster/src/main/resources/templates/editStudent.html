@@ -38,6 +38,7 @@
                 <div class="col-3 text-center m-3">
                     <span class="h3">Edit Student</span>
                 </div>
+                <!--errors will display over inputs-->
                 <div class="col-7 text-center m-3">
                     <form action="editStudent" method="POST">
                         <div class="form-group row">
@@ -58,11 +59,13 @@
                             <label for="lastName" class="col-3 col-form-label">
                                 Last Name</label>
                             <div class="col-9">
-                                <input type="text" name="lastName" id="lastName" class="form-control" 
+                                <input type="text" name="lastName" id="lastName" 
+                                       class="form-control" 
                                        th:value="${student.lastName}" />
                                 <div th:if="${#fields.hasErrors('student.lastName')}">
-                                    <p th:each="error : ${#fields.errors('student.lastName')}" class="alert alert-danger" 
-                                       th:text="${error}"> Bad last name</p>
+                                    <p th:each="error : ${#fields.errors('student.lastName')}" 
+                                       class="alert alert-danger" th:text="${error}">
+                                        Bad last name</p>
                                 </div>
                             </div>
                         </div>
