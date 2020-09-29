@@ -40,7 +40,7 @@ public class TeacherController {
 
     @Autowired
     ImageDao imageDao;
-    
+
     private final String teacherUploadDirectory = "Teachers";
 
     Set<ConstraintViolation<Teacher>> violations = new HashSet<>();
@@ -58,7 +58,7 @@ public class TeacherController {
     @PostMapping("addTeacher")
     public String addTeacher(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
         String fileLocation = imageDao.saveImage(file, Long.toString(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)), teacherUploadDirectory);
-        
+
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String specialty = request.getParameter("specialty");
@@ -82,11 +82,11 @@ public class TeacherController {
     @GetMapping("deleteTeacher")
     public String deleteTeacher(HttpServletRequest request) {
         int id = Integer.parseInt(request.getParameter("id"));
-        
+
         //delete pic
         Teacher teacher = teacherDao.getTeacherById(id);
         imageDao.deleteImage(teacher.getPhotoFileName());
-        
+
         //delete the teacher from dao
         teacherDao.deleteTeacherById(id);
 

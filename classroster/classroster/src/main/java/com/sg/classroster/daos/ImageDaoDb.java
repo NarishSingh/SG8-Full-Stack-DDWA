@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Repository
 public class ImageDaoDb implements ImageDao {
 
+    //Multipart file obj's are stored temp, its on the dev to persist it, hence the fields
     private final String RESOURCE_ROOT = "C:/Users/naris/Documents/Work/TECHHIRE/REPOSITORY/SG8-Full-Stack-DDWA/classroster/classroster/src/main/resources/static/";
     private final String UPLOAD_DIRECTORY = "images/uploads/";
 
@@ -21,13 +22,15 @@ public class ImageDaoDb implements ImageDao {
     public String saveImage(MultipartFile file, String fileName, String directory) {
         String savedFileName = "";
 
-        String mimetype = file.getContentType(); //check the file extension
+        String mimetype = file.getContentType();
         if (mimetype != null && mimetype.split("/")[0].equals("image")) {
+            //prepare the filename for persistance
             String originalName = file.getOriginalFilename();
             String[] parts = originalName.split("[.]");
             fileName = fileName + "." + parts[parts.length - 1];
 
             try {
+                //assemble and make path if needed
                 String fullPath = RESOURCE_ROOT + UPLOAD_DIRECTORY + directory + "/";
                 File dir = new File(fullPath);
 

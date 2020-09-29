@@ -30,7 +30,7 @@
                     <a href="courses" class="btn btn-outline-primary btn-lg">Courses</a>
                 </div>
             </div>
-            
+
             <!--edit teacher form-->
             <div class="row m-4 border border-dark">
                 <div class="col-3 text-center m-3">
@@ -63,14 +63,14 @@
                             </div>
                         </div>
                         <input type="hidden" name="id" th:value="${teacher.id}"/>
-                        
-                        <!--image-->
+
+                        <!--image, will actually display original pic from server-->
                         <img th:src="${teacher.photoFileName}" style="height: 250px"/>
                         <div class="form-group row">
                             <label for="file" class="col-3 col-form-label">Profile Picture</label>
                             <input type="file" name="file" class="form-control-file"/>
                         </div>
-                        
+
                         <button type="submit" class="btn btn-primary">
                             Update Teacher</button>
                     </form>

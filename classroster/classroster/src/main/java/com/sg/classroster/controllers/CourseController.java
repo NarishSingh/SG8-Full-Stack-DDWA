@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.sg.classroster.controllers;
 
 import com.sg.classroster.daos.CourseDao;
@@ -12,9 +7,14 @@ import com.sg.classroster.dtos.Course;
 import com.sg.classroster.dtos.Student;
 import com.sg.classroster.dtos.Teacher;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,16 +30,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class CourseController {
 
-   @Autowired
-   TeacherDao teacherDao;
+    @Autowired
+    TeacherDao teacherDao;
 
-   @Autowired
-   StudentDao studentDao;
+    @Autowired
+    StudentDao studentDao;
 
-   @Autowired
-   CourseDao courseDao;
-   
-   @GetMapping("courses")
+    @Autowired
+    CourseDao courseDao;
+    
+    Set<ConstraintViolation<Course>> violations = new HashSet<>();
+
+    @GetMapping("courses")
     public String displayCourses(Model model) {
         List<Course> courses = courseDao.getAllCourses();
         List<Teacher> teachers = teacherDao.getAllTeachers();
@@ -49,37 +51,57 @@ public class CourseController {
         model.addAttribute("students", students);
         return "courses";
     }
-    
+
     @PostMapping("addCourse")
-    public String addCourse(Course course, HttpServletRequest request) {
+    public String addCourse(@Valid Course course, BindingResult result, 
+            HttpServletRequest request, Model model) {
         String teacherId = request.getParameter("teacherId");
         String[] studentIds = request.getParameterValues("studentId");
-        
+
         course.setTeacher(teacherDao.getTeacherById(Integer.parseInt(teacherId)));
-        
+
         List<Student> students = new ArrayList<>();
-        for(String studentId : studentIds) {
-            students.add(studentDao.getStudentById(Integer.parseInt(studentId)));
+        if (studentIds != null) {
+            for (String studentId : studentIds) {
+                students.add(studentDao.getStudentById(Integer.parseInt(studentId)));
+            }
+        } else {
+            FieldError error = new FieldError("course", "students", "Must include one student");
+            result.addError(error);
         }
+
         course.setStudents(students);
-        courseDao.addCourse(course);
         
+        if (result.hasErrors()) {
+            model.addAttribute("teachers", teacherDao.getAllTeachers());
+            model.addAttribute("students", studentDao.getAllStudents());
+            model.addAttribute("course", course);
+            return "addCourse";
+        }
+        
+        Validator validate = Validation.buildDefaultValidatorFactory().getValidator();
+        violations = validate.validate(course);
+
+        if (violations.isEmpty()) {
+            courseDao.addCourse(course);
+        }
+
         return "redirect:/courses";
     }
-    
+
     @GetMapping("courseDetail")
     public String courseDetail(Integer id, Model model) {
         Course course = courseDao.getCourseById(id);
         model.addAttribute("course", course);
         return "courseDetail";
     }
-    
+
     @GetMapping("deleteCourse")
     public String deleteCourse(Integer id) {
         courseDao.deleteCourseById(id);
         return "redirect:/courses";
     }
-    
+
     @GetMapping("editCourse")
     public String editCourse(Integer id, Model model) {
         Course course = courseDao.getCourseById(id);
@@ -90,35 +112,36 @@ public class CourseController {
         model.addAttribute("teachers", teachers);
         return "editCourse";
     }
-    
+
     @PostMapping("editCourse")
-    public String performEditCourse(@Valid Course course, BindingResult result, HttpServletRequest request, Model model) {
+    public String performEditCourse(@Valid Course course, BindingResult result,
+            HttpServletRequest request, Model model) {
         String teacherId = request.getParameter("teacherId");
         String[] studentIds = request.getParameterValues("studentId");
-                
+
         course.setTeacher(teacherDao.getTeacherById(Integer.parseInt(teacherId)));
 
         List<Student> students = new ArrayList<>();
-        if(studentIds != null) {
-            for(String studentId : studentIds) {
+        if (studentIds != null) {
+            for (String studentId : studentIds) {
                 students.add(studentDao.getStudentById(Integer.parseInt(studentId)));
             }
         } else {
             FieldError error = new FieldError("course", "students", "Must include one student");
             result.addError(error);
         }
-        
+
         course.setStudents(students);
-        
-        if(result.hasErrors()) {
+
+        if (result.hasErrors()) {
             model.addAttribute("teachers", teacherDao.getAllTeachers());
             model.addAttribute("students", studentDao.getAllStudents());
             model.addAttribute("course", course);
             return "editCourse";
         }
-        
+
         courseDao.updateCourse(course);
-        
+
         return "redirect:/courses";
     }
 }

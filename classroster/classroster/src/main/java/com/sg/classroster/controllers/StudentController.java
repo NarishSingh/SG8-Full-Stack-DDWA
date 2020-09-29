@@ -1,16 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.sg.classroster.controllers;
 
 import com.sg.classroster.daos.CourseDao;
 import com.sg.classroster.daos.StudentDao;
 import com.sg.classroster.daos.TeacherDao;
 import com.sg.classroster.dtos.Student;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +34,8 @@ public class StudentController {
 
     @Autowired
     CourseDao courseDao;
+    
+    Set<ConstraintViolation<Student>> violations = new HashSet<>();
 
     @GetMapping("students")
     public String displayStudents(Model model) {
@@ -41,6 +44,8 @@ public class StudentController {
         return "students";
     }
 
+    //Using raw data
+    /*
     @PostMapping("addStudent")
     public String addStudent(String firstName, String lastName) {
         Student student = new Student();
@@ -48,6 +53,27 @@ public class StudentController {
         student.setLastName(lastName);
         studentDao.addStudent(student);
 
+        return "redirect:/students";
+    }
+*/
+    
+    //using model
+    @PostMapping("addStudent")
+    public String addStudent(HttpServletRequest request){
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        
+        Student s = new Student();
+        s.setFirstName(firstName);
+        s.setLastName(lastName);
+        
+        Validator validate = Validation.buildDefaultValidatorFactory().getValidator();
+        violations = validate.validate(s);
+
+        if (violations.isEmpty()) {
+            studentDao.addStudent(s);
+        }
+        
         return "redirect:/students";
     }
 

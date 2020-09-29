@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 public class Teacher {
 
     private int id;
-    
+
     @NotBlank(message = "First name must not be empty.")
     @Size(max = 30, message = "First name must be less than 30 characters.")
     private String firstName;
@@ -24,7 +24,7 @@ public class Teacher {
     private String specialty;
 
     private String photoFileName;
-    
+
     public int getId() {
         return id;
     }
@@ -64,7 +64,7 @@ public class Teacher {
     public void setPhotoFileName(String photoFileName) {
         this.photoFileName = photoFileName;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 7;
