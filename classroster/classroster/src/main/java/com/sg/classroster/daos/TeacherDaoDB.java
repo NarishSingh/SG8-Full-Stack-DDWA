@@ -73,13 +73,16 @@ public class TeacherDaoDB implements TeacherDao {
     @Transactional
     public void deleteTeacherById(int id) {
         final String DELETE_COURSE_STUDENT = "DELETE cs.* FROM course_student cs "
-                + "JOIN course c ON cs.courseId = c.Id WHERE c.teacherId = ?";
+                + "JOIN course c ON cs.courseId = c.Id "
+                + "WHERE c.teacherId = ?";
         jdbc.update(DELETE_COURSE_STUDENT, id);
 
-        final String DELETE_COURSE = "DELETE FROM course WHERE teacherId = ?";
+        final String DELETE_COURSE = "DELETE FROM course "
+                + "WHERE teacherId = ?";
         jdbc.update(DELETE_COURSE, id);
 
-        final String DELETE_TEACHER = "DELETE FROM teacher WHERE id = ?";
+        final String DELETE_TEACHER = "DELETE FROM teacher "
+                + "WHERE id = ?";
         jdbc.update(DELETE_TEACHER, id);
     }
 
